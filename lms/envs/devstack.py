@@ -557,6 +557,12 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:1994',  # frontend-app-gradebook
 ]
 
+# Using patched edx-django-utils
+OPENEDX_TELEMETRY = [
+    'edx_django_utils.monitoring.NewRelicBackend',
+    'edx_django_utils.monitoring.OpenTelemetryBackend',
+    'edx_django_utils.monitoring.DatadogBackend',
+]
 
 ################# New settings must go ABOVE this line #################
 ########################################################################
