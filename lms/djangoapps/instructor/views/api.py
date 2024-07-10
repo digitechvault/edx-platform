@@ -1087,6 +1087,7 @@ def modify_access(request, course_id):
     }
     return JsonResponse(response_payload)
 
+
 def verify_course_permission(permission):
     """
         Decorator with argument that requires a specific permission of the requesting
@@ -1142,7 +1143,6 @@ class ListCourseRoleMembersView(APIView):
         }
 
         return Response(response_payload, status=status.HTTP_200_OK)
-
 
 
 class ProblemResponseReportPostParamsSerializer(serializers.Serializer):  # pylint: disable=abstract-method
