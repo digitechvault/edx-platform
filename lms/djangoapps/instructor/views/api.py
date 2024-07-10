@@ -119,7 +119,7 @@ from openedx.core.djangoapps.django_comment_common.models import (
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.user_api.preferences.api import get_user_preference
 from openedx.core.djangolib.markup import HTML, Text
-from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiveUser, BearerAuthentication
+from openedx.core.lib.api.authentication import BearerAuthentication, BearerAuthenticationAllowInactiveUser
 from rest_framework.authentication import SessionAuthentication
 from openedx.core.lib.api.view_utils import DeveloperErrorViewMixin, view_auth_classes
 from openedx.core.lib.courses import get_course_by_id
@@ -229,6 +229,30 @@ def require_course_permission(permission):
             else:
                 return HttpResponseForbidden()
         return wrapped
+    return decorator
+
+
+def verify_course_permission(permission):
+    """
+        Decorator with argument that requires a specific permission of the requesting
+        user. If the requirement is not satisfied, returns an
+        HttpResponseForbidden (403).
+        Assumes that request is in self.
+        Assumes that course_id is in kwargs['course_id'].
+        """
+
+    def decorator(func):
+        def wrapped(self, *args, **kwargs):
+            request = self.request
+            course = get_course_by_id(CourseKey.from_string(kwargs['course_id']))
+
+            if request.user.has_perm(permission, course):
+                return func(self, *args, **kwargs)
+            else:
+                return HttpResponseForbidden()
+
+        return wrapped
+
     return decorator
 
 
@@ -1118,6 +1142,7 @@ class ListCourseRoleMembersView(APIView):
         }
 
         return Response(response_payload, status=status.HTTP_200_OK)
+
 
 
 class ProblemResponseReportPostParamsSerializer(serializers.Serializer):  # pylint: disable=abstract-method
