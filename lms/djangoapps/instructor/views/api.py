@@ -1088,30 +1088,6 @@ def modify_access(request, course_id):
     return JsonResponse(response_payload)
 
 
-def verify_course_permission(permission):
-    """
-        Decorator with argument that requires a specific permission of the requesting
-        user. If the requirement is not satisfied, returns an
-        HttpResponseForbidden (403).
-        Assumes that request is in self.
-        Assumes that course_id is in kwargs['course_id'].
-        """
-
-    def decorator(func):
-        def wrapped(self, *args, **kwargs):
-            request = self.request
-            course = get_course_by_id(CourseKey.from_string(kwargs['course_id']))
-
-            if request.user.has_perm(permission, course):
-                return func(self, *args, **kwargs)
-            else:
-                return HttpResponseForbidden()
-
-        return wrapped
-
-    return decorator
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
