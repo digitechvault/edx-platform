@@ -1100,6 +1100,7 @@ class ListCourseRoleMembersView(APIView):
 
     @method_decorator(ensure_csrf_cookie)
     @verify_course_permission(permissions.EDIT_COURSE_ACCESS)
+    @method_decorator(cache_control(no_cache=True, no_store=True, must_revalidate=True))
     def post(self, request, course_id):
 
         course_id = CourseKey.from_string(course_id)
